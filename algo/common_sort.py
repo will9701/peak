@@ -3,6 +3,7 @@
 # @Date : 2024-01-10-16-12
 # @AUTHOR : will
 # 常见排序算法
+import random
 from random import shuffle
 
 
@@ -96,9 +97,94 @@ def merge(nums, left, mid, right):
         nums[left+idx] = tmp[idx]
 
 
+def counting_sort(nums):
+    """
+    nums 为非负整数的数组，且差值应该尽可能的小
+    :param nums:
+    :return:
+    """
+    #1 统计最大值
+    mm = max(nums)
+    #2 统计频次
+    counter = [0] * (mm + 1)
+    for nn in nums:
+        counter[nn] += 1
+    # 输出结果数组
+    res = []
+    for idx, nn in enumerate(counter):
+        for jj in range(nn):
+            res.append(idx)
+    return res
+
+
+class ToSortObj:
+
+    def __init__(self, age, name):
+        self.age = age
+        self.name = name
+
+    def __repr__(self):
+        return '<name, age>(%s, %s)' % (self.name, self.age)
+
+
+def counting_sort_objects():
+    nums = [ToSortObj(11, 'A'), ToSortObj(11, 'B'), ToSortObj(12, 'C'), ToSortObj(1, 'D'), ToSortObj(26, 'JJ')]
+    max_age = max([t.age for t in nums])
+    counter = [0] * (max_age + 1)
+    for p in nums:
+        counter[p.age] += 1
+    # 计算前缀和
+    for i in range(1, max_age + 1):
+        counter[i] += counter[i-1]
+    # 前缀和性质 counter[num] - 1 为num在res中索引的位置
+    res = [None] * len(nums)
+    for p_idx in range(len(nums) - 1, -1, -1):
+        p = nums[p_idx]
+        res[counter[p.age] - 1] = p
+        counter[p.age] -= 1
+    print(res)
+    return res
+
+
+def get_digit(number, exp):
+    # exp for 1, 10, 100
+    return (number // exp) % 10
+
+
+def digit_sort(nums, exp):
+    counter = [0] * 10
+    for n in nums:
+        d = get_digit(n, exp)
+        counter[d] += 1
+    for i in range(1, 10):
+        counter[i] += counter[i-1]
+    res = [None] * len(nums)
+    for i in range(len(nums) - 1, -1, -1):
+        d = get_digit(nums[i], exp)
+        res[counter[d] - 1] = nums[i]
+        counter[d] -= 1
+    for i in range(len(nums)):
+        nums[i] = res[i]
+    print(nums)
+
+
+def radix_sort():
+    nums = list()
+    for _ in range(20):
+        nums.append(random.randrange(10000000, 99999999))
+    print(nums)
+    exp = 1
+    while exp <= max(nums):
+        digit_sort(nums, exp)
+        exp *= 10
+    print(nums)
+
+
 if __name__ == '__main__':
     nums = (list(range(20)))
     shuffle(nums)
     print(nums)
-    merge_sort(nums, 0, len(nums) - 1)
+    nums = counting_sort(nums)
     print(nums)
+    counting_sort_objects()
+    radix_sort()
