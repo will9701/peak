@@ -61,6 +61,36 @@ def temperature(lis):
 假设直方图中柱子的宽都为1。例如，输入数组[3，2，5，4，6，1，4，2]，其对应的直方图如图6.3所示，
 该直方图中最大矩形面积为12，如阴影部分所示。
 """
+def max_area(lis):
+    stack = [-1]
+    res = 0
+    for i, height in enumerate(lis):
+        while stack[-1] != -1 and height <= lis[stack[-1]]:
+            cur = lis[stack.pop()]
+            width = i - stack[-1] - 1
+            res = max(res, width * cur)
+        stack.append(i)
+    while stack and stack[-1] != -1:
+        cur = stack.pop()
+        width = len(lis) - stack[-1] - 1
+        res = max(res, lis[cur] * width)
+    return res
+
+
+"""面试题40：矩阵中的最大矩形题目：请在一个由0、1组成的矩阵中找出最大的只包含1的矩形并输出它的面积。例如，在图6.6的矩阵中，最大的只包含1的矩阵如阴影部分所示，它的面积是6。
+"""
+def find1area(martix):
+    # 每一行为基地，转直方图
+    heights = [0] * len(martix[0])
+    res = 0
+    for row in martix:
+        for i, ele in enumerate(row):
+            if ele == 0:
+                heights[i] = 0
+            else:
+                heights[i] += 1
+        res = max(res, max_area(heights))
+    return res
 
 
 if __name__ == "__main__":
@@ -69,4 +99,14 @@ if __name__ == "__main__":
     res = exsplosed([4, 5, -6, 4, 8, -5])
     print(res)
     res = temperature([35, 31, 33, 36, 34])
+    print(res)
+    res = max_area([1, 1, 3, 2, 2])
+    print(res)
+    mat = [
+        [1, 0, 1, 0, 0],
+        [0, 0, 1, 1, 1],
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 1, 0]
+    ]
+    res = find1area(mat)
     print(res)
